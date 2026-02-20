@@ -1,0 +1,17 @@
+{
+  "name": "devops-assessment-nodejs",
+  "version": "1.0.0",
+  "description": "DevOps assessment app — Node.js/Express with intentional bottlenecks",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

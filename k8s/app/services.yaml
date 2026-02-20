@@ -1,0 +1,49 @@
+---
+# Python App Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-python
+  namespace: assessment
+  labels:
+    app: app-python
+    assessment: "true"
+spec:
+  selector:
+    app: app-python
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Ingress — routes external traffic into the cluster via k3d's Traefik ingress.
+#
+# Default backend: Python app on /
+# To switch to Node.js: change the serviceName below to "app-nodejs"
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: assessment-ingress
+  namespace: assessment
+  labels:
+    assessment: "true"
+  annotations:
+    # Candidates: tweak Traefik annotations here for rate-limiting, buffering, etc.
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: assessment.local
+      http:
+        paths:
+          # ── Python app (default) ──────────────────────────────────────
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-python      # ← change to app-nodejs to switch
+                port:
+                  number: 80

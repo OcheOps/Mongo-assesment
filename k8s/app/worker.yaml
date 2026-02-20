@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-worker
+  namespace: assessment
+  labels:
+    app: app-worker
+    assessment: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-worker
+  template:
+    metadata:
+      labels:
+        app: app-worker
+    spec:
+      containers:
+        - name: app-worker
+          image: assessment/app-python:latest
+          imagePullPolicy: Never
+          command: ["python", "worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/assessmentdb"
+            - name: BATCH_SIZE
+              value: "50"
+            - name: FLUSH_INTERVAL_MS
+              value: "100"
+            - name: MAX_OPS_PER_SEC
+              value: "100"
+            - name: RECENT_MAX
+              value: "1000"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
